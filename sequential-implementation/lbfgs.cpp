@@ -29,49 +29,6 @@ void ensureSameSize(const vector<double> &v1, const vector<double> &v2) {
         throw logic_error("Vectors must be of same size");
 }
 
-// ---------------------------------------------------------------------------------------------------------------------
-// Functions for testing
-double f1(const vector<double> &X) {
-    const double x = X[0];
-    const double y = X[1];
-    const double z = X[2];
-
-    return (x - 1)*(x - 1) + (y + 2)*(y + 2) + (z - 3)*(z - 3);
-}
-
-vector<double> grad1(const vector<double> &point) {
-    const double x = point[0];
-    const double y = point[1];
-    const double z = point[2];
-
-    return { 2*x - 2, 2*y + 4, 2*z - 6 };
-}
-
-double f2(const vector<double> &X) {
-    const double x = X[0];
-
-    return (x * x);
-}
-
-vector<double> grad2(const vector<double> &point) {
-    const double x = point[0];
-
-    return { 2*x };
-}
-
-double f3(const vector<double> &X) {
-    const double x = X[0];
-
-    return (x - 2)*(x - 2)*(x - 2)*(x - 2) + 1;
-}
-
-vector<double> grad3(const vector<double> &point) {
-    const double x = point[0];
-
-    return { 4 * (x - 2)*(x - 2)*(x - 2) };
-}
-
-// ---------------------------------------------------------------------------------------------------------------------
 
 double dotProduct(const vector<double> &v1, const vector<double> &v2) {
     ensureSameSize(v1, v2);
@@ -140,17 +97,16 @@ double lineSearch(
     const function<double(vector<double>)>& f, 
     const vector<double>& gradient, 
     double alpha = 1.0, 
-    double beta = 0.5, 
+    double beta = 0.9, 
     double c = 1e-4
 ) {
     double f_x = f(x);
     vector<double> x_new = add(x, scalarProduct(alpha, d));
-
     while (f(x_new) > f_x + c * alpha * dotProduct(gradient, d)) {
         alpha *= beta;
         x_new = add(x, scalarProduct(alpha, d));
     }
-
+    // cout << "alfa " << alpha << endl;
     return alpha;
 }
 
@@ -178,12 +134,10 @@ vector<double> LBFGS(
     vector<double> d(N, 0);
 
     for (int k = 0; k < max_iterations; ++k) {
-
         if (k == 0) {
             d = negative(gradient);
         } else {
             const int bound = max(0, k - m);
-
             vector<double> s_prev = s_history.back();
             vector<double> y_prev = y_history.back();
 
@@ -197,15 +151,15 @@ vector<double> LBFGS(
             double rho = 1. / ys;
             vector<double> q = gradient;
             vector<double> a(s_history.size(), 0.);
-
-            for (int i = k - 1; i >= bound; --i) {
+            
+            for (int i = k - 1; i >= bound; --i) { 
                 vector<double> s_i = s_history[i];
                 vector<double> y_i = y_history[i];
 
                 double a_i = 0.;
-                for (int j = 0; j < N; ++j)
+                for (int j = 0; j < N; ++j){
                     a_i += s_i[j] * q[j];
-
+                }
                 a_i = a_i * rho;
                 a[i] = a_i;
 
@@ -250,14 +204,19 @@ vector<double> LBFGS(
             yk[i] = gradient_new[i] - gradient[i];
         }
 
+
+
         s_history.push_back(sk);
         y_history.push_back(yk);
 
-        if (s_history.size() > m) {
+        // This does not align with indexing in the code above, so we save entire history for now.
+
+     /*   if (s_history.size() > m) {
             // We only need to keep the last M entries
             s_history.erase(s_history.begin());
             y_history.erase(y_history.begin());
         }
+    */
 
         if (vectorNorm(gradient_new) < tolerance)
             return x_new;
@@ -270,14 +229,3 @@ vector<double> LBFGS(
 }
 
 
-int main() {
-    vector<double> optimum1 = LBFGS(f1, grad1, { 0.1, 0.3, 0.4 }, 50, 10, 1e-4, 0.9, 1e-5);
-    vector<double> optimum2 = LBFGS(f2, grad2, { 12 }, 50, 10, 1e-4, 0.9, 1e-5);
-    vector<double> optimum3 = LBFGS(f3, grad3, { 3. }, 50, 10, 1e-4, 0.9, 1e-5);
-
-    printVector(optimum1); // Solution must be (1 - 2 3)
-    printVector(optimum2); // Solution must be 0
-    printVector(optimum3); // Solution must be 2
-
-    return 0;
-}
