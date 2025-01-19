@@ -69,6 +69,41 @@ vector<double> dixon_price_grad(const vector<double> &X) {
 
     return grad;
 }
+
+double perm(const vector<double> &X) {
+    double beta = 0.5;
+    size_t N = X.size();
+    double sum = 0.0;
+
+    for (size_t i = 0; i < N; ++i) {
+        double inner_sum = 0.0;
+        for (size_t j = 0; j < N; ++j) {
+            inner_sum += (j + 1 + beta) * (pow(X[j], i + 1) - pow(1.0 / (j + 1), i + 1));
+        }
+        sum += inner_sum * inner_sum;
+    }
+
+    return sum;
+}
+
+vector<double> perm_grad(const vector<double> &X) {
+    double beta = 0.5;
+    size_t N = X.size();
+    vector<double> grad(N, 0.0);
+    for (size_t i = 0; i < N; ++i) {
+        for (size_t k = 0; k < N; ++k) {
+            double inner_sum = 0.0;
+            for (size_t j = 0; j < N; ++j) {
+                inner_sum += (j + 1 + beta) * (pow(X[j], i + 1) - pow(1.0 / (j + 1), i + 1));
+            }
+            double term = 2.0 * inner_sum * (i + 1) * (k + 1 + beta) * pow(X[k], i);
+            grad[k] += term;
+        }
+    }
+
+    return grad;
+}
+
 void benchmark(
     const string function_name,
     const function<double(vector<double>)> f,
@@ -100,8 +135,8 @@ void benchmark(
 int main() {
     unsigned seed = 42;  
     std::mt19937 gen(seed); 
-    std::uniform_real_distribution<> dis(-5, 5); 
-    std::vector<double> x0(100);
+    std::uniform_real_distribution<> dis(-10, 10); 
+    std::vector<double> x0(10);
     for (double& num : x0) {
         num = dis(gen); 
     }
@@ -112,7 +147,7 @@ int main() {
         quadratic,
         quadratic_grad,
         x0, // x0
-        100, // max_iterations
+        10, // max_iterations
         10,  // m
         1e-4, // beta_min
         0.9, // beta_max
@@ -120,11 +155,11 @@ int main() {
     );
 
     benchmark(
-        "Dixon-Price Function",
-        dixon_price,
-        dixon_price_grad,
+        "Perm Function",
+        perm,
+        perm_grad,
         x0, // x0
-        600, // max_iterations
+        5, // max_iterations
         10,  // m
         1e-4, // beta_min
         0.9, // beta_max
