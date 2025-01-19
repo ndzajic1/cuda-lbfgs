@@ -46,6 +46,29 @@ vector<double> rosenbrock_grad(const vector<double> &X) {
     return grad;
 }
 
+double dixon_price(const vector<double> &X) {
+    size_t N = X.size();
+    double sum = (X[0] - 1) * (X[0] - 1); // First term
+    for (size_t i = 1; i < N; ++i) {
+        double term = 2.0 * X[i] * X[i] - X[i - 1];
+        sum += i * term * term;
+    }
+    return sum;
+}
+
+vector<double> dixon_price_grad(const vector<double> &X) {
+    size_t N = X.size();
+    vector<double> grad(N, 0.0);
+    grad[0] = 2.0 * (X[0] - 1) - 2.0 * (2.0 * X[1] * X[1] - X[0]);
+    for (size_t i = 1; i < N - 1; ++i) {
+        double term = 2.0 * X[i] * X[i] - X[i - 1];
+        grad[i] = 4.0 * i * X[i] * term - 2.0 * (2.0 * X[i + 1] * X[i + 1] - X[i]);
+    }
+    double last_term = 2.0 * X[N - 1] * X[N - 1] - X[N - 2];
+    grad[N - 1] = 4.0 * (N - 1) * X[N - 1] * last_term;
+
+    return grad;
+}
 void benchmark(
     const string function_name,
     const function<double(vector<double>)> f,
@@ -77,7 +100,7 @@ void benchmark(
 int main() {
     unsigned seed = 42;  
     std::mt19937 gen(seed); 
-    std::uniform_real_distribution<> dis(-2.048, 2.048); 
+    std::uniform_real_distribution<> dis(-5, 5); 
     std::vector<double> x0(100);
     for (double& num : x0) {
         num = dis(gen); 
@@ -97,6 +120,18 @@ int main() {
     );
 
     benchmark(
+        "Dixon-Price Function",
+        dixon_price,
+        dixon_price_grad,
+        x0, // x0
+        600, // max_iterations
+        10,  // m
+        1e-4, // beta_min
+        0.9, // beta_max
+        1e-5 // tolerance
+    );
+/*
+    benchmark(
         "Rosenbrock Function",
         rosenbrock,
         rosenbrock_grad,
@@ -107,6 +142,6 @@ int main() {
         0.9, // beta_max
         1e-5 // tolerance
     );
-
+*/
     return 0;
 }
