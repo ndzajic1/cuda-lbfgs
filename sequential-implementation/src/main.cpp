@@ -6,6 +6,7 @@
 #include "lbfgs.h"
 #include <algorithm> 
 #include <random> 
+#include <VectorOps.h>
 
 using namespace std;
 
@@ -117,7 +118,7 @@ void benchmark(
 ) {
     auto start = chrono::high_resolution_clock::now();
     
-    vector<double> optimum = LBFGS(f, grad, x0, max_iterations, m, beta_min, beta_max, tolerance);
+    vector<double> optimum = LBFGS(f, grad, x0, "backtracking_wolfe", max_iterations, m,tolerance);
     auto end = chrono::high_resolution_clock::now();
 
     chrono::duration<double> elapsed = end - start;
@@ -136,7 +137,7 @@ int main() {
     unsigned seed = 42;  
     std::mt19937 gen(seed); 
     std::uniform_real_distribution<> dis(-10, 10); 
-    std::vector<double> x0(10);
+    std::vector<double> x0(10000);
     for (double& num : x0) {
         num = dis(gen); 
     }
@@ -155,28 +156,16 @@ int main() {
     );
 
     benchmark(
-        "Perm Function",
-        perm,
-        perm_grad,
-        x0, // x0
-        5, // max_iterations
-        10,  // m
-        1e-4, // beta_min
-        0.9, // beta_max
-        1e-5 // tolerance
-    );
-/*
-    benchmark(
         "Rosenbrock Function",
         rosenbrock,
         rosenbrock_grad,
         x0, // x0
-        100, // max_iterations
+        15000, // max_iterations
         10,  // m
         1e-4, // beta_min
         0.9, // beta_max
         1e-5 // tolerance
-    );
-*/
+    ); 
+
     return 0;
 }
