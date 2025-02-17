@@ -1,1 +1,3 @@
 # cuda-lbfgs
+
+`./run.sh`
