@@ -126,7 +126,7 @@ void benchmark(
     cout << "Function: " << function_name << endl;
     // cout << "Initial point: ";
     // printVector(x0);
-    cout << "Optimum point: ";
+    // cout << "Optimum point: ";
     // printVector(optimum);
     cout << "Optimum value: " << f(optimum) << endl;
     cout << "Elapsed time: " << elapsed.count() << " seconds" << endl;
