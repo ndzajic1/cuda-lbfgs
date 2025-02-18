@@ -1,13 +1,13 @@
 #ifndef LBFGS_H
 #define LBFGS_H
 
-
-#include<vector>
-#include<functional>
+#include <vector>
+#include <functional>
 #include <LineSearch.h>
 #include <LBFGSConfig.h>
 #include <LBFGSConstants.h>
 #include <VectorOps.h>
+#include "matrices.h"
 
 using namespace std;
 
