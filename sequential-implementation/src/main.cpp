@@ -127,34 +127,38 @@ void benchmark(
     // cout << "Initial point: ";
     // printVector(x0);
     cout << "Optimum point: ";
-    printVector(optimum);
+    // printVector(optimum);
     cout << "Optimum value: " << f(optimum) << endl;
     cout << "Elapsed time: " << elapsed.count() << " seconds" << endl;
     cout << "---------------------------------------------" << endl;
 }
 
 int main() {
-    unsigned seed = 42;  
-    std::mt19937 gen(seed); 
-    std::uniform_real_distribution<> dis(-10, 10); 
-    std::vector<double> x0(10000);
-    for (double& num : x0) {
-        num = dis(gen); 
+    // unsigned seed = 42;  
+    // mt19937 gen(seed); 
+    // uniform_real_distribution<> dis(-10, 10); 
+    // vector<double> x0(10000);
+    // for (double& num : x0) {
+    //     num = dis(gen); 
+    // }
+    vector<double> matrices[8] = {mat2, mat3, mat4, mat5, mat10, mat50, mat100, mat500};
+    int matrixDimensions[8] = {2, 3, 4, 5, 10, 50, 100, 500};
+
+    for (int i = 0; i < 8; i++) {
+        benchmark(
+            "Quadratic Function (" + to_string(matrixDimensions[i]) + "x" + to_string(matrixDimensions[i]) + ")",
+            quadratic,
+            quadratic_grad,
+            matrices[i],
+            10, // max_iterations
+            10,  // m
+            1e-4, // beta_min
+            0.9, // beta_max
+            1e-5 // tolerance
+        );
     }
 
-
-    benchmark(
-        "Quadratic Function",
-        quadratic,
-        quadratic_grad,
-        x0, // x0
-        10, // max_iterations
-        10,  // m
-        1e-4, // beta_min
-        0.9, // beta_max
-        1e-5 // tolerance
-    );
-
+    /*
     benchmark(
         "Rosenbrock Function",
         rosenbrock,
@@ -165,7 +169,8 @@ int main() {
         1e-4, // beta_min
         0.9, // beta_max
         1e-5 // tolerance
-    ); 
+    );
+    */ 
 
     return 0;
 }
