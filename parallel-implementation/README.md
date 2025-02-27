@@ -1,3 +1,6 @@
 # cuda-lbfgs
+Compile selected `.cu` file with \
+`./run.sh <CU_FILE_NAME>` 
 
-`./run.sh`
+Run with \
+`./lbfgs_cuda`
