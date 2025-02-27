@@ -1,3 +1,3 @@
 # cuda-lbfgs
 
-`./run.sh`
+Purely CPU L-BFGS optimizer along with GPU accelerated L-BFGS.
