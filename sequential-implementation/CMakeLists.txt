@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
-project(LBFGS_Optimizer LANGUAGES CXX)
+project(LBFGS)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include_directories(include)
+add_executable(lbfgs
+    lbfgs.cpp
+    vector_utils.cpp  
+    line_search.cpp
+    benchmark.cpp
+    main.cpp
+)
 
-file(GLOB SOURCES "src/*.cpp")
-
-add_executable(lbfgs_example ${SOURCES})
-
-target_compile_options(lbfgs_example PRIVATE -O2)
+target_include_directories(lbfgs PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

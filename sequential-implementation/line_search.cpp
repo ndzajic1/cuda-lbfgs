@@ -1,6 +1,6 @@
-#include "LineSearch.h"
-#include "LBFGSConstants.h"
-#include "VectorOps.h"
+#include <functional>
+#include "config.h"
+#include "vector_utils.h"
 #include <limits>
 using namespace std;
 

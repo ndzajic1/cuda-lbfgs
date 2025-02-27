@@ -1,5 +1,5 @@
-#ifndef LBFGS_CONSTANTS_H
-#define LBFGS_CONSTANTS_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
 // Armijo and Wolfe condition constants
 constexpr double C1 = 1e-4;   // Armijo condition constant
@@ -16,4 +16,4 @@ constexpr double BACKTRACKING_TOL = 1e-8;  // Convergence threshold
 constexpr double WOLFE_INTERP_MIN = 1e-10;
 constexpr double WOLFE_INTERP_MAX = 10.0;
 
-#endif // LBFGS_CONSTANTS_H
+#endif // CONFIG_H
